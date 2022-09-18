@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AddressBookSystem
 {
-    class AddressBook
+    class AddressBook : IAddressBook
     {
-        public static Dictionary<string, ContactDetails> contactList = new Dictionary<string, ContactDetails>();
+        public List<ContactDetails> contactList = new List<ContactDetails>();
         const int UPDATE_FIRST_NAME = 1;
         const int UPDATE_LAST_NAME = 2;
         const int UPDATE_ADDRESS = 3;
@@ -31,43 +31,57 @@ namespace AddressBookSystem
             string phoneNumber;
             string email;
 
-            Console.WriteLine("\nEnter the first name of contact");
+            Console.WriteLine("\nEnter The First Name of Contact");
             firstName = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the last name of contact");
+            Console.WriteLine("\nEnter The Last Name of Contact");
             lastName = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the address of contact");
+            Console.WriteLine("\nEnter The Address of Contact");
             address = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the city name of contact");
+            Console.WriteLine("\nEnter The City Name of Contact");
             city = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the state name of contact");
+            Console.WriteLine("\nEnter The State Name of Contact");
             state = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the zip of locality of contact");
+            Console.WriteLine("\nEnter the Zip of Locality of Contact");
             zip = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the phone number of contact");
+            Console.WriteLine("\nEnter The Phone Number of Contact");
             phoneNumber = Console.ReadLine();
 
-            Console.WriteLine("\nEnter the email of contact");
+            Console.WriteLine("\nEnter The Email of Contact");
             email = Console.ReadLine();
 
             // Adding contact into address book
             ContactDetails addNewContact = new ContactDetails(firstName, lastName, address, city, state, zip, phoneNumber, email);
+
+            //Checking for duplicates
             try
             {
-                contactList.Add(firstName + " " + lastName, addNewContact);
-                Console.WriteLine("Contact Added");
+                bool createCopy = false;
+                foreach (ContactDetails contact in contactList)
+                {
+                    if ((contact.firstName + " " + contact.lastName).Equals(firstName + " " + lastName))
+                    {
+                        Console.WriteLine("\nThe name of the contact already exits.Press Y to save a copy as {0}1 or any other key to exit", (contact.firstName + " " + contact.lastName));
+                        throw new Exception();
+                    }
+                }
+                contactList.Add(addNewContact);
+                Console.WriteLine("\nContact Added");
             }
             catch
             {
-                Console.WriteLine("The name of the contact already exits.");
+                if ((Console.ReadLine().ToLower() == "y"))
+                {
+                    addNewContact.lastName += "1";
+                    contactList.Add(addNewContact);
+                    Console.WriteLine("\nContact Added");
+                }
             }
-
-
         }
         public void DisplayContactDetails()
         {
@@ -75,55 +89,63 @@ namespace AddressBookSystem
             string name = Console.ReadLine().ToLower();
             DisplayContactDetails(name, "search");
         }
-        private string SearchByName(string name)
+        private int SearchByName(string name)
         {
-            int numOfConatctsWithNameSearched = 2;
+            int numOfConatctsWithNameSearched = 0;
             if (contactList.Count == 0)
             {
                 Console.WriteLine("\nNo contacts saved");
-                return null;
+                return -1;
             }
             else
             {
                 // Loop to find exact name being searched
-                while (!contactList.ContainsKey(name))
+                while (numOfConatctsWithNameSearched == 0)
                 {
-                    numOfConatctsWithNameSearched = 0;
-
-                    foreach (KeyValuePair<string, ContactDetails> keyValuePair in contactList)
+                    int numOfContactsSearched = 0;
+                    //Search if Contacts have the given string in name
+                    foreach (ContactDetails contact in contactList)
                     {
-                        if ((keyValuePair.Key).Contains(name))
+                        numOfContactsSearched++;
+
+                        // If contact name matches exactly then it returns the index of that contact
+                        if ((contact.firstName + " " + contact.lastName).Equals(name))
+                            return contactList.IndexOf(contact);
+
+                        //If a part of contact name matches then we would ask them to enter accurately
+                        else if ((contact.firstName + " " + contact.lastName).Contains(name))
                         {
                             numOfConatctsWithNameSearched++; // num of contacts having search string
-                            Console.WriteLine("\nname of contact is {0}", (keyValuePair.Value).firstName + " " + (keyValuePair.Value).lastName);
+                            Console.WriteLine("\nname of contact is {0}", contact.firstName + " " + contact.lastName);
                         }
+                        //If string is not part of any name then exit
+                        else
+                            return -1;
 
-                    }
-                    if (numOfConatctsWithNameSearched == 0)
-                    {
-                        Console.WriteLine("\nContact not found");
-                        return null;
-                    }
-                    else
-                    {
-                        // Getting more accurate search
-                        Console.WriteLine("\nInput the contact name as firstName lastName\n");
-                        name = Console.ReadLine().ToLower();
+                        if (numOfContactsSearched == contactList.Count() && numOfConatctsWithNameSearched > 0)
+                        {
+                            Console.WriteLine("\nInput the contact name as firstName lastName\n");
+                            name = Console.ReadLine().ToLower();
+                            numOfConatctsWithNameSearched = 0;
+                        }
                     }
                 }
             }
-            return name;
+            return 0;
         }
+
         private void DisplayContactDetails(string name, string purpose)
         {
-            name = SearchByName(name);
+            // Get the index number of required contact
+            int contactSerialNum = SearchByName(name);
+
             // To display details of contact
-            if (name == null)
+            if (contactSerialNum < 0)
                 Console.WriteLine("Contact Not Found");
-            else if (contactList.ContainsKey(name))
+            else
             {
                 int serialNum = 1;
-                Console.WriteLine("\nname of contact is {0}", name);
+                Console.WriteLine("\nDetails of: {0}", name);
                 Console.WriteLine("{0}- Firstname: {1}", serialNum++, contactList[name].firstName);
                 Console.WriteLine("{0}- Lastname: {1}", serialNum++, contactList[name].lastName);
                 Console.WriteLine("{0}- Address: {1}", serialNum++, contactList[name].address);
@@ -132,11 +154,11 @@ namespace AddressBookSystem
                 Console.WriteLine("{0}- Zip code: {1}", serialNum++, contactList[name].zip);
                 Console.WriteLine("{0}- Phone Number: {1}", serialNum++, contactList[name].phoneNumber);
                 Console.WriteLine("{0}- Email ID: {1}", serialNum++, contactList[name].email);
+                if (purpose.ToLower() == "update")
+                    UpdateContact(contactSerialNum);
+                else if (purpose.ToLower() == "remove")
+                    RemoveContact(contactSerialNum);
             }
-            if (purpose.ToLower() == "update" && contactList.ContainsKey(name))
-                UpdateContact(name);
-            if (purpose.ToLower() == "remove" && contactList.ContainsKey(name))
-                RemoveContact(name);
         }
         public void UpdateContact()
         {
@@ -144,7 +166,7 @@ namespace AddressBookSystem
             string name = Console.ReadLine().ToLower();
             DisplayContactDetails(name, "update");
         }
-        public void UpdateContact(string name)
+        public void UpdateContact(int contactSerialNum)
         {
             //Getting the attribute to be updated
             Console.WriteLine("\nEnter the row number attribute to be updated");
@@ -158,31 +180,31 @@ namespace AddressBookSystem
             switch (updateAttributeNum)
             {
                 case UPDATE_FIRST_NAME:
-                    contactList[name].firstName = newValue;
+                    contactList[contactSerialNum].firstName = newValue;
                     break;
                 case UPDATE_LAST_NAME:
-                    contactList[name].lastName = newValue;
+                    contactList[contactSerialNum].lastName = newValue;
                     break;
                 case UPDATE_ADDRESS:
-                    contactList[name].address = newValue;
+                    contactList[contactSerialNum].address = newValue;
                     break;
                 case UPDATE_CITY:
-                    contactList[name].city = newValue;
+                    contactList[contactSerialNum].city = newValue;
                     break;
                 case UPDATE_STATE:
-                    contactList[name].state = newValue;
+                    contactList[contactSerialNum].state = newValue;
                     break;
                 case UPDATE_ZIP:
-                    contactList[name].zip = newValue;
+                    contactList[contactSerialNum].zip = newValue;
                     break;
                 case UPDATE_PHONE_NUMBER:
-                    contactList[name].phoneNumber = newValue;
+                    contactList[contactSerialNum].phoneNumber = newValue;
                     break;
                 case UPDATE_EMAIL:
-                    contactList[name].email = newValue;
+                    contactList[contactSerialNum].email = newValue;
                     break;
                 default:
-
+                    Console.WriteLine("Invalid Entry");
                     break;
             }
             Console.WriteLine("\nUpdate Successful");
@@ -194,13 +216,13 @@ namespace AddressBookSystem
             DisplayContactDetails(name, "remove");
 
         }
-        private void RemoveContact(string name)
+        private void RemoveContact(int contactSerialNum)
         {
             Console.WriteLine("Press y to confirm delete or any other key to abort");
             switch (Console.ReadLine().ToLower())
             {
                 case "y":
-                    contactList.Remove(name);
+                    contactList.RemoveAt(contactSerialNum);
                     Console.WriteLine("Contact deleted");
                     break;
                 default:
