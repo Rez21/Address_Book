@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AddressBookSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,60 +9,55 @@ namespace AddressBookSystem
 {
     // Interface created for abstraction and easy access for user
 
-    public interface IAddressBook
-    {
-        void AddContact(string firstName, string lastName, string address, string city, string state, string zip, string phonenumber, string email);
-        void DisplayPhoneNumber(string Name);
+    
+}
+public interface IAddressBook
+{
+    void DisplayContactDetails();
+    void AddContact();
+    public void UpdateContact();
+}
+class Program
+{
+    const string addContact = "add";
+    const string updateContact = "update";
+    const string searchContact = "search";
 
-    }
-    class Program
+    static void Main(string[] args)
     {
+        bool flag = true;
 
-        static void Main(string[] args)
+        Console.WriteLine("Welcome to Address Book Program");
+
+        AddressBook addressBook = new AddressBook();
+        while (flag)
         {
-            string firstName;
-            string lastName;
-            string address;
-            string city;
-            string state;
-            string zip;
-            string phoneNumber;
-            string email;
-            Console.WriteLine("Welcome to Address Book Program");
+            Console.WriteLine("\nType\nAdd - To add a contact \nupdate- To update a contact and \nsearch- To search to get contact deatails");
 
-            AddressBook addressBook = new AddressBook();
+            switch (Console.ReadLine().ToLower())
+            {
+                case addContact:
 
-            Console.WriteLine("Enter the first name of contact");
-            firstName = Console.ReadLine();
+                    addressBook.AddContact();
+                    break;
 
-            Console.WriteLine("Enter the last name of contact");
-            lastName = Console.ReadLine();
+                case updateContact:
 
-            Console.WriteLine("Enter the address of contact");
-            address = Console.ReadLine();
+                    addressBook.UpdateContact();
+                    break;
 
-            Console.WriteLine("Enter the city name of contact");
-            city = Console.ReadLine();
+                case searchContact:
 
-            Console.WriteLine("Enter the state name of contact");
-            state = Console.ReadLine();
+                    addressBook.DisplayContactDetails();
+                    break;
 
-            Console.WriteLine("Enter the zip of locality of contact");
-            zip = Console.ReadLine();
-
-            Console.WriteLine("Enter the phone number of contact");
-            phoneNumber = Console.ReadLine();
-
-            Console.WriteLine("Enter the email of contact");
-            email = Console.ReadLine();
-
-            // Adding contact into address book
-            addressBook.AddContact(firstName, lastName, address, city, state, zip, phoneNumber, email);
-
-            // Searching phone Number by contact name
-            Console.WriteLine("Enter the name of Contact to get Phone number");
-            addressBook.DisplayPhoneNumber(Console.ReadLine());
-
+                default:
+                    flag = false;
+                    Console.WriteLine("Invalid option. Try again");
+                    Console.WriteLine("Enter any key to exit");
+                    break;
+            }
         }
+        Console.ReadKey();
     }
 }
