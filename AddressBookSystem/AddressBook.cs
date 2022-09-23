@@ -285,15 +285,15 @@ namespace AddressBookSystem
             }
             // Display all the atributes of contact
             int rowNum = 1;
-            Console.WriteLine("\nDetails of : {0}", contactList[contactSerialNum].firstName + " " + contactList[contactSerialNum].lastName);
-            Console.WriteLine("{0}- Firstname: {1}", rowNum++, contactList[contactSerialNum].firstName);
-            Console.WriteLine("{0}- Lastname: {1}", rowNum++, contactList[contactSerialNum].lastName);
-            Console.WriteLine("{0}- Address: {1}", rowNum++, contactList[contactSerialNum].address);
-            Console.WriteLine("{0}- City: {1}", rowNum++, contactList[contactSerialNum].city);
-            Console.WriteLine("{0}- State: {1}", rowNum++, contactList[contactSerialNum].state);
-            Console.WriteLine("{0}- Zip code: {1}", rowNum++, contactList[contactSerialNum].zip);
-            Console.WriteLine("{0}- PhoneNumber: {1}", rowNum++, contactList[contactSerialNum].phoneNumber);
-            Console.WriteLine("{0}- Email ID: {1}", rowNum++, contactList[contactSerialNum].email);
+            Console.WriteLine("\nDetails of: {0}", contact.firstName + " " + contact.lastName);
+            Console.WriteLine("{0}-Firstname: {1}", rowNum++, contact.firstName);
+            Console.WriteLine("{0}-Lastname: {1}", rowNum++, contact.lastName);
+            Console.WriteLine("{0}-Address: {1}", rowNum++, contact.address);
+            Console.WriteLine("{0}-City: {1}", rowNum++, contact.city);
+            Console.WriteLine("{0}-State: {1}", rowNum++, contact.state);
+            Console.WriteLine("{0}-Zip code: {1}", rowNum++, contact.zip);
+            Console.WriteLine("{0}-PhoneNumber: {1}", rowNum++, contact.phoneNumber);
+            Console.WriteLine("{0}-Email ID: {1}", rowNum++, contact.email);
         }
         // Searches the contact by name.
         private ContactDetails SearchByName(string name)

@@ -98,6 +98,53 @@ namespace AddressBookSystem
                 return;
             }
         }
+
+        /// Views all the contacts of a city.
+        public void ViewAllByCity()
+        {
+            if (addressBookList.Count == 0)
+            {
+                Console.WriteLine("\nNo record found");
+                return;
+            }
+
+            // Get the name of city from user
+            Console.WriteLine("\nEnter the city name to search for contact");
+            string cityName = Console.ReadLine().ToLower();
+
+            // If the given city doesnt exist
+            if (!(cityToContactMap.ContainsKey(cityName)))
+            {
+                Console.WriteLine("\nNo contacts exist in the city");
+                return;
+            }
+
+            foreach (ContactDetails contact in cityToContactMap[cityName])
+                AddressBook.ToString(contact);
+        }
+        /// Views all the contacts of a state
+        public void ViewAllByState()
+        {
+            if (addressBookList.Count == 0)
+            {
+                Console.WriteLine("\nNo record found");
+                return;
+            }
+
+            // Get the name of city from user
+            Console.WriteLine("\nEnter the state name to search for contact");
+            string stateName = Console.ReadLine().ToLower();
+
+            // If the given city doesnt exist
+            if (!(stateToContactMap.ContainsKey(stateName)))
+            {
+                Console.WriteLine("\nNo contacts exist in the city");
+                return;
+            }
+
+            foreach (ContactDetails contact in stateToContactMap[stateName])
+                AddressBook.ToString(contact);
+        }
         /// Searches the state of the in.
         public void SearchInState()
         {
